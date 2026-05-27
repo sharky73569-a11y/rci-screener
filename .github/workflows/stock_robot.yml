@@ -18,18 +18,19 @@ jobs:
       with:
         python-version: '3.10'
 
-    # 💡 404 에러를 유발하던 주소를 올바른 'master.zip'으로 수정하고 완전히 고정했습니다.
+    # 💡 [진짜 해결책] 복잡한 외부 zip 주소를 버리고, 
+    # 호환성이 완벽하게 검증된 구버전 이름표를 정석대로 강제 주입합니다.
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas numpy
+        pip install pandas==1.5.3 numpy==1.23.5
         pip install finance-datareader
         pip install requests
-        pip install https://github.com/twopirllc/pandas-ta/archive/refs/heads/master.zip
+        pip install pandas-ta==0.3.14b
 
     - name: Run script
       env:
-        # 🔒 보안 비밀 금고 연동 (해킹 철저 방어)
+        # 🔒 보안 비밀 금고 연동 (내 정보 노출 차단)
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       # 회원님의 실제 파이썬 파일인 RCI_BOTTOM.py를 가동합니다.
