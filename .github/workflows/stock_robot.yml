@@ -18,20 +18,16 @@ jobs:
       with:
         python-version: '3.10'
 
-    # 💡 [진짜 해결책] 복잡한 외부 zip 주소를 버리고, 
-    # 호환성이 완벽하게 검증된 구버전 이름표를 정석대로 강제 주입합니다.
+    # 💡 말썽을 부리던 무거운 도구들을 싹 빼버리고 기본 패키지만 담백하게 설치합니다.
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas==1.5.3 numpy==1.23.5
+        pip install pandas numpy
         pip install finance-datareader
         pip install requests
-        pip install pandas-ta==0.3.14b
 
     - name: Run script
       env:
-        # 🔒 보안 비밀 금고 연동 (내 정보 노출 차단)
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      # 회원님의 실제 파이썬 파일인 RCI_BOTTOM.py를 가동합니다.
       run: python RCI_BOTTOM.py
