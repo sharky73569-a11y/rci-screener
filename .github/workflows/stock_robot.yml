@@ -18,19 +18,19 @@ jobs:
       with:
         python-version: '3.10'
 
-    # 💡 [치트키] 깃허브 검색창을 거치지 않고 오피셜 압축 파일을 다이렉트로 다운받아 강제 설치합니다.
+    # 💡 404 에러를 유발하던 주소를 올바른 'master.zip'으로 수정하고 완전히 고정했습니다.
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pandas numpy
         pip install finance-datareader
         pip install requests
-        pip install https://github.com/twopirllc/pandas-ta/archive/refs/heads/main.zip
+        pip install https://github.com/twopirllc/pandas-ta/archive/refs/heads/master.zip
 
     - name: Run script
       env:
-        # 🔒 보안 비밀 금고 연동 (해킹 완벽 방어)
+        # 🔒 보안 비밀 금고 연동 (해킹 철저 방어)
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      # 회원님의 실제 파이썬 파일 이름인 RCI_BOTTOM.py를 정확하게 가동합니다.
+      # 회원님의 실제 파이썬 파일인 RCI_BOTTOM.py를 가동합니다.
       run: python RCI_BOTTOM.py
