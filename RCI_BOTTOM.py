@@ -3,10 +3,9 @@ import time
 import datetime
 import FinanceDataReader as fdr
 import pandas as pd
-import pandas_ta as ta
 import requests
 
-# 🔒 깃허브 금고(Secrets)에서 안전하게 주소를 불러옵니다. 해킹 위험 0%
+# 🔒 깃허브 금고(Secrets)에서 안전하게 주소를 불러옵니다.
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
@@ -17,6 +16,23 @@ def send_telegram_message(message):
         requests.post(url, json=payload)
     except Exception as e:
         print(f"텔레그램 전송 실패: {e}")
+
+# 🛠️ 외부 라이브러리 없이 자체적으로 Williams %R을 계산하는 함수
+def calculate_williams_r(df, period=14):
+    low_min = df['Low'].rolling(window=period).min()
+    high_max = df['High'].rolling(window=period).max()
+    williams_r = ((high_max - df['Close']) / (high_max - low_min)) * -100
+    return williams_r.iloc[-1]
+
+# 🛠️ 외부 라이브러리 없이 자체적으로 RCI를 계산하는 함수
+def calculate_rci(df, period=14):
+    if len(df) < period:
+        return None
+    close_prices = df['Close'].tail(period)
+    time_rank = pd.Series(range(1, period + 1), index=close_prices.index)
+    price_rank = close_prices.rank(method='min')
+    rci = time_rank.corr(price_rank, method='spearman') * 100
+    return rci
 
 def main():
     print("▶ 주식 데이터 수집 및 조건 검색을 시작합니다...")
@@ -45,16 +61,12 @@ def main():
                 continue
             
             # [조건 2] Williams %R (14) 계산
-            williams_r = ta.willr(df['High'], df['Low'], df['Close'], length=14).iloc[-1]
+            williams_r = calculate_williams_r(df, length=14) if 'length' in calculate_williams_r.__code__.co_varnames else calculate_williams_r(df, 14)
             
             # [조건 3] RCI (14) 계산
-            period = 14
-            if len(df) >= period:
-                close_prices = df['Close'].tail(period)
-                time_rank = pd.Series(range(1, period + 1), index=close_prices.index)
-                price_rank = close_prices.rank(method='min')
-                rci = time_rank.corr(price_rank, method='spearman') * 100
-            else:
+            rci = calculate_rci(df, 14)
+            
+            if rci is None:
                 continue
 
             # 🎯 요청하신 조건 검증 (RCI -70 이하 / 윌리엄스 -70 ~ -90 사이)
