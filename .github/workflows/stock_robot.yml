@@ -18,19 +18,19 @@ jobs:
       with:
         python-version: '3.10'
 
-    # 설치 버전을 유연하게 풀어서 에러를 완벽히 우회한 빌드 구역입니다.
+    # 💡 [치트키] 깃허브 검색창을 거치지 않고 오피셜 압축 파일을 다이렉트로 다운받아 강제 설치합니다.
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pandas==2.1.4 numpy==1.26.4
+        pip install pandas numpy
         pip install finance-datareader
-        pip install pandas-ta
         pip install requests
+        pip install https://github.com/twopirllc/pandas-ta/archive/refs/heads/main.zip
 
     - name: Run script
       env:
-        # 🔒 보안 철저 유지 (Secrets 금고 연동)
+        # 🔒 보안 비밀 금고 연동 (해킹 완벽 방어)
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-      # 회원님의 실제 파이썬 파일 이름인 RCI_BOTTOM.py를 실행합니다.
+      # 회원님의 실제 파이썬 파일 이름인 RCI_BOTTOM.py를 정확하게 가동합니다.
       run: python RCI_BOTTOM.py
